@@ -1,7 +1,20 @@
-FROM node:18-alpine
+# Use official Python image
+FROM python:3.11-slim
+
+# Set working directory
 WORKDIR /app
-COPY package*.json ./
-RUN npm ci --production
+
+# Copy requirements first for caching
+COPY requirements.txt .
+
+# Install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the entire project
 COPY . .
-EXPOSE 3000
-CMD ["npm", "start"]
+
+# Expose default Django port
+EXPOSE 8000
+
+# Run Django development server
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
